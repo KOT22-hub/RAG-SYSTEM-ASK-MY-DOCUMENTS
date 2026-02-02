@@ -1,6 +1,6 @@
 # Ask My Document
 
-A **high-performance, local Retrieval-Augmented Generation (RAG) system** that allows you to upload documents and chat with them in natural language. Designed for **data privacy**, all processing occurs locally using **Ollama** and **PostgreSQL with pgvector**.
+A **high-performance, local Retrieval-Augmented Generation (RAG) system** that allows you to upload text documents and chat with them in natural language. Designed for **data privacy**, all processing occurs locally using **Ollama** and **PostgreSQL with pgvector**.
 
 This system differs from a general RAG assistant: it's **document-centric**, letting you interact with uploaded files directly, rather than relying on pre-existing knowledge or conversation history.
 
@@ -82,7 +82,7 @@ Answer Generation with source citations
 ### Prerequisites
 
 * Node.js v18+
-* PostgreSQL with pgvector installed
+* PostgreSQL with pgvector using Docker 
 * Ollama installed
 
 ### Install Local Models
