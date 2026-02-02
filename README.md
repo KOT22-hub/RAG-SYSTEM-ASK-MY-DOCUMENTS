@@ -1,86 +1,155 @@
-🚀 Local RAG System: Ask My Documents
-A high-performance Retrieval-Augmented Generation (RAG) system built with Node.js. This application allows you to upload documents, convert them into vector embeddings, and chat with your data locally using Ollama and PostgreSQL (pgvector).
+# Ask My Document
 
-✨ Features
-Local Processing: Uses Ollama to run LLMs locally, ensuring data privacy.
+A **high-performance, local Retrieval-Augmented Generation (RAG) system** that allows you to upload documents and chat with them in natural language. Designed for **data privacy**, all processing occurs locally using **Ollama** and **PostgreSQL with pgvector**.
 
-Vector Search: Powered by pgvector with an HNSW index for lightning-fast similarity lookups.
+This system differs from a general RAG assistant: it's **document-centric**, letting you interact with uploaded files directly, rather than relying on pre-existing knowledge or conversation history.
 
-Intelligent Chunking: Implements recursive text splitting with overlap to maintain context.
+## Problem Statement
 
-Source Attribution: Responses include citations showing exactly which document chunks were used.
+Organizations and individuals often struggle to extract meaningful insights from large document collections. Traditional LLMs:
 
-Batch Embedding: Efficiently processes large documents by batching embedding requests.
+* Cannot access private files directly
+* May hallucinate without proper context
+* Often require cloud-based APIs, risking data privacy
 
-🛠️ Tech Stack
-Component	Technology
-Runtime	Node.js (Express)
-Database	PostgreSQL + pgvector extension
-LLM (Chat)	Gemma 3:1b (via Ollama)
-Embeddings	Nomic-Embed-Text (via Ollama)
-Vector Index	HNSW (Hierarchical Navigable Small World)
-📥 Getting Started
-1. Prerequisites
+Result: Slow, inaccurate, or insecure document search and summarization.
 
-Node.js (v18+)
+## Solution Overview
 
-PostgreSQL (with pgvector installed)
+**Ask My Document** solves these problems by:
 
-Ollama
+1. **Ingesting documents locally** and splitting them into intelligently sized chunks with overlap to preserve context
+2. **Generating vector embeddings** for each chunk using Ollama
+3. **Storing embeddings in PostgreSQL with an HNSW index** for fast similarity search
+4. **Retrieving the most relevant chunks** when a user queries the system
+5. **Generating factual responses** with source attribution using Gemma 3:1b
 
-2. Install Local Models
+The system ensures **accurate, grounded, and private interactions** with your documents.
 
-Open your terminal and pull the necessary models:
+## Business Value
 
-Bash
+* Instant access to large document collections
+* Reduces time spent searching or summarizing files manually
+* Preserves privacy by running locally
+* Supports multiple file formats (plain text, PDFs, etc.)
+* Useful for research, customer support, compliance, or knowledge management
+
+### Example Use Cases
+
+* Internal company manuals Q&A
+* Academic research paper summaries
+* Legal or compliance document search
+* Personal knowledge management
+
+## High-Level Architecture
+
+```text
+Document Upload
+      |
+      v
+Node.js / Express API
+      |
+      |-- Chunking --> Ollama (nomic-embed-text embeddings)
+      |-- Vector Storage --> PostgreSQL + pgvector (HNSW Index)
+      |
+      v
+Ollama LLM (gemma3:1b)
+      |
+      v
+Answer Generation with source citations
+```
+
+## Tech Stack
+
+| Component    | Technology                                |
+| ------------ | ----------------------------------------- |
+| Runtime      | Node.js (Express)                         |
+| Database     | PostgreSQL + pgvector                     |
+| LLM          | Gemma 3:1b via Ollama                     |
+| Embeddings   | Nomic-Embed-Text via Ollama               |
+| Vector Index | HNSW (Hierarchical Navigable Small World) |
+
+## Core Features
+
+* **Local Processing** – Runs fully on your machine with Ollama
+* **Vector Search** – Fast similarity search using HNSW index
+* **Intelligent Chunking** – Recursive text splitting with overlap
+* **Source Attribution** – Responses cite exact document chunks
+* **Batch Embedding** – Efficiently handles large documents
+
+## Getting Started
+
+### Prerequisites
+
+* Node.js v18+
+* PostgreSQL with pgvector installed
+* Ollama installed
+
+### Install Local Models
+
+```bash
 ollama pull gemma3:1b
 ollama pull nomic-embed-text
-3. Setup Environment Variables
+```
 
-Create a .env file in the root directory:
+### Setup Environment Variables
 
-Code snippet
+Create a `.env` file in the root directory:
+
+```
 PORT=3000
 DB_USER=postgres
 DB_PASSWORD=your_password
 DB_HOST=localhost
 DB_NAME=llm_docs
 DB_PORT=5432
-4. Installation
+```
 
-Bash
+### Installation
+
+```bash
 # Install dependencies
 npm install
 
 # Start the server
 node index.js
-🛰️ API Endpoints
-POST /api/upload-file
+```
 
-Uploads a text file, chunks the content, generates embeddings, and saves them to the vector database.
+## API Endpoints
 
-Body: multipart/form-data (file)
+**POST /api/upload-file** – Uploads a text file, chunks the content, generates embeddings, and stores them.
 
-POST /api/chat
+* Body: `multipart/form-data` (file)
 
-Query your documents using natural language.
+**POST /api/chat** – Query documents in natural language.
 
-Body: { "prompt": "Who is Kutenda?" }
+* Body: `{ "prompt": "Who is Kutenda?" }`
+* Response:
 
-Response:
-
-JSON
+```json
 {
   "answer": "Kutenda is a software developer...",
   "sources": ["Doc ID: 4", "Doc ID: 5"]
 }
-🧠 How It Works
-Ingestion: Files are read and split into 400-character chunks with a 100-character overlap.
+```
 
-Embedding: Each chunk is converted into a 768-dimensional vector using nomic-embed-text.
+## How It Works
 
-Storage: Vectors and text chunks are stored in a PostgreSQL table with an HNSW index for efficient Cosine Similarity searching.
+1. **Ingestion** – Files are read and split into 400-character chunks with 100-character overlap.
+2. **Embedding** – Each chunk is converted into a 768-dimensional vector using nomic-embed-text.
+3. **Storage** – Vectors and text chunks are stored in PostgreSQL with HNSW index for efficient similarity search.
+4. **Retrieval** – User queries are embedded; top 5 most relevant chunks retrieved.
+5. **Generation** – Context + query sent to Gemma 3:1b for a factual, grounded response with citations.
 
-Retrieval: When a user asks a question, the question is embedded and the top 5 most relevant chunks are retrieved via the <=> operator.
+## Future Enhancements
 
-Generation: The context and the question are sent to gemma3:1b to generate a factual, grounded response.
+* Support for PDFs and other document formats
+* Multi-document query batching
+* Real-time streaming responses
+* Authentication and multi-user support
+* Conversation history and memory features
+* Multi-language document embeddings
+
+## Project Significance
+
+**Ask My Document** demonstrates a production-ready, **document-focused RAG architecture** that prioritizes privacy, accuracy, and efficiency. Perfect for enterprise knowledge management, research workflows, and personal data interaction.
