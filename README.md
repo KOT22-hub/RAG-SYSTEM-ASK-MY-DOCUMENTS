@@ -18,7 +18,7 @@ Result: Slow, inaccurate, or insecure document search and summarization.
 
 **Ask My Document** solves these problems by:
 
-1. **Ingesting documents locally** and splitting them into intelligently sized chunks with overlap to preserve context
+1. **Ingesting text documents locally** and splitting them into intelligently sized chunks with overlap to preserve context
 2. **Generating vector embeddings** for each chunk using Ollama
 3. **Storing embeddings in PostgreSQL with an HNSW index** for fast similarity search
 4. **Retrieving the most relevant chunks** when a user queries the system
@@ -31,7 +31,7 @@ The system ensures **accurate, grounded, and private interactions** with your do
 * Instant access to large document collections
 * Reduces time spent searching or summarizing files manually
 * Preserves privacy by running locally
-* Supports multiple file formats (plain text, PDFs, etc.)
+* Supports text file format
 * Useful for research, customer support, compliance, or knowledge management
 
 ### Example Use Cases
@@ -112,15 +112,14 @@ DB_PORT=5432
 npm install
 
 # Start the server
-node index.js
+node Server.js
 ```
 
 ## API Endpoints
 
-**POST /api/upload-file** – Uploads a text file, chunks the content, generates embeddings, and stores them.
-
-* Body: `multipart/form-data` (file)
-
+API Endpoints
+**POST /api/upload-file – Uploads a text file, chunks the content, generates embeddings, and stores them.
+Body: form-data (text file)
 **POST /api/chat** – Query documents in natural language.
 
 * Body: `{ "prompt": "Who is Kutenda?" }`
